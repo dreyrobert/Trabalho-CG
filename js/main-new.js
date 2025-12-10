@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "./three/three.module.js";
 import { CAMERA_CONFIG } from "./config/constants.js";
 import { PlayerControls } from "./controls/PlayerControls.js";
 import { LightingSystem } from "./lighting/LightingSystem.js";
@@ -54,11 +54,13 @@ class Game {
   }
   
   setupSystems() {
-    this.playerControls = new PlayerControls(this.camera, document.body);
     this.lightingSystem = new LightingSystem(this.scene);
     this.starSystem = new StarSystem(this.scene);
     this.cloudSystem = new CloudSystem(this.scene);
     this.world = new World(this.scene);
+    
+    // Cria o PlayerControls após o mundo estar disponível
+    this.playerControls = new PlayerControls(this.camera, document.body, this.world);
   }
   
   setupEventListeners() {
@@ -81,6 +83,7 @@ class Game {
     // Atualiza todos os sistemas
     this.playerControls.update(delta);
     this.lightingSystem.update(delta);
+    this.world.update(delta);
     
     // Sistemas que dependem de informações do lighting
     const dayIntensity = this.lightingSystem.getDayIntensity();
